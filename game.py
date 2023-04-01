@@ -1,13 +1,14 @@
-grid_size = 3
+grid_size = 4
 grid0 = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
 legal0 = [[i, j] for j in range(grid_size) for i in range(grid_size)]
 cells0 = {'w': [], 'b': []}
 turn0 = 'b'
+neighbour_coord = ((-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0))
 
 grid0[0][0] = 1
-grid0[0][1] = 2
+grid0[3][3] = 2
 legal0.remove([0, 0])
-legal0.remove([0, 1])
+legal0.remove([3, 3])
 
 
 def next_turn(turn):
@@ -15,9 +16,8 @@ def next_turn(turn):
 
 
 def get_neighbour(grid, z, connected):
-    i, j = z[0], z[1]
+    i, j = z
     color = grid[i][j]
-    neighbour_coord = ((-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0))
     neighbours = []
     for z in neighbour_coord:
         if 0 <= i + z[0] < grid_size and 0 <= j + z[1] < grid_size and \
@@ -30,24 +30,22 @@ def get_neighbour(grid, z, connected):
 
 
 def update_cells(cells, turn, last_move):
-    i, j = last_move[0], last_move[1]
-    neighbour_coord = ((-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0))
+    i, j = last_move
     new_group = [last_move]
     for z in neighbour_coord:
         for cell in cells[turn]:
-            if 0 <= i + z[0] < grid_size and 0 <= j + z[1] < grid_size and [i + z[0], j + z[1]] in cell:
+            if [i + z[0], j + z[1]] in cell:
                 new_group.extend(cell)
                 cells[turn].remove(cell)
+                break
     cells[turn].append(new_group)
     return cells
 
 
 def end_game(cells, turn):
+    i = 1 if turn == 'w' else 0
     for cell in cells[turn]:
-        if turn == 'w':
-            L = [pos[1] for pos in cell]
-        else:
-            L = [pos[0] for pos in cell]
+        L = [pos[i] for pos in cell]
         if 0 in L and grid_size - 1 in L:
             return True
     return False
@@ -57,7 +55,7 @@ def move(grid, legal_moves, cells, turn, pos):
     i, j = pos[0], pos[1]
     grid[i][j] = 1 if turn == 'w' else 2
     legal_moves.remove([i, j])
-    return grid, legal_moves, update_cells(cells, turn, pos), next_turn(turn),
+    return grid, legal_moves, update_cells(cells, turn, pos), next_turn(turn)
 
 
 def restart_game():
@@ -68,5 +66,5 @@ def restart_game():
     turn0 = 'b'
 
 
-def copy(l):
-    return [i for i in l]
+def copy(x):
+    return [i for i in x]

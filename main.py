@@ -13,7 +13,7 @@ running = True
 pg.init()
 ui.draw_environment()
 ui.draw_circles([0, 0], 'w')
-ui.draw_circles([0, 1], 'b')
+ui.draw_circles([3, 3], 'b')
 pg.display.update()
 while running:
     # gmd.user()
